@@ -1,11 +1,13 @@
 const USER = require("../models/userModels")
-const CHAT = require("../models/chatModels")
+const CHAT = require("../models/chatModels");
+const { default: mongoose } = require("mongoose");
 
 // get one to one chat
 const accessChat = async (req, res) => {
     try {
 
-        const userId = req.body;
+        const userId = req.body.userId;
+
 
         if (!userId) {
             return res.status(404).json({ message: "Missing UserID", success: false })
@@ -17,7 +19,7 @@ const accessChat = async (req, res) => {
                 { users: { $elemMatch: { $eq: req.user._id } } },
                 { users: { $elemMatch: { $eq: userId } } }
             ]
-        }).populate("user", "-password")
+        }).populate("users", "-password")
             .populate('latestMessage')
 
 
@@ -39,14 +41,8 @@ const accessChat = async (req, res) => {
         }
 
         const createdChat = await CHAT.create(chatData)
-
         const FullChat = await CHAT.findOne({ _id: createdChat._id }).populate("user", "-password")
-
-
         return res.status(200).json({ success: true, message: "chat Get Successfylly", data: FullChat })
-
-
-
 
     } catch (error) {
         console.log("error ==== in ===== accessChat", error.message)
@@ -56,10 +52,14 @@ const accessChat = async (req, res) => {
 
 
 //get all chat of single user
-const fetchChats = (req, res) => {
+const fetchChats = async (req, res) => {
     try {
 
+        console.log("req.user._id ==============>", req.user._id)
+
+
         CHAT.find({
+            // const result = await CHAT.find({
             users: [{
                 $elemMatch: { $eq: req.user._id }
             }]
@@ -76,8 +76,12 @@ const fetchChats = (req, res) => {
                 return res.status(200).json({ success: true, message: "Data Got Successfylly", data: results })
             });
 
+        // return res.status(200).json({ success: true, message: "Data Got Successfylly", data: results })
+
+
     } catch (error) {
         console.log("error === in ====fetchChats", error.message)
+        return res.status(500).json({ success: false, message: "Some Technical issue" })
     }
 
 }
@@ -209,4 +213,4 @@ const removeFromGroup = async (req, res) => {
 
 
 
-module.exports = { accessChat, fetchChats, createGroupChat, renameGroup ,addToGroup ,removeFromGroup }
+module.exports = { accessChat, fetchChats, createGroupChat, renameGroup, addToGroup, removeFromGroup }

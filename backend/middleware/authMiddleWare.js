@@ -5,12 +5,14 @@ const protect = async (req,res,next)=>{
   try {
 
     let token
-    if(req.headers.authorization && req.headers.authorization.startWith("Bearer")){
+
+    // console.log('req.headers.authorization',req.headers.authorization)
+    if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")){
         token = req.headers.authorization.split(" ")[1]
 
         //decode Token
 
-        token = JWT.verify(token,process.env.JWT_SECRET)
+        decoded = JWT.verify(token,process.env.JWT_SECRET)
 
         req.user = await USER.findById(decoded.id).select("-passward")
 

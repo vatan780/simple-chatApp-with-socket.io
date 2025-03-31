@@ -4,7 +4,8 @@ import "./index.css";
 import App from "./App";
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter } from 'react-router-dom'
-import ChatProvider from "./ChatProvider";
+import ChatProvider from "./Context/ChatProvider";
+// import ChatProvider from "./ChatProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
