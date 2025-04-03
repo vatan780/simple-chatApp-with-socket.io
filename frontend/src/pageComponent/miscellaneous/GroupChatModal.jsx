@@ -64,7 +64,61 @@ const GroupChatModal = ({ children }) => {
 
     }
 
-    const handleSubmit = () => {
+    const handleSubmit =async () => {
+
+        if(!groupChatName || !selectedUser){
+            toast({
+                title: 'Please Fill All The Fields.',
+                status: 'warning',
+                duration: 5000,
+                isClosable: true,
+                position: "top"
+            })
+
+        }
+        try {
+            // setLoading(true)
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`
+                }
+            }
+
+            const data = await axios.post(`/api/chat/group`,{
+                name:groupChatName,
+                users:JSON.stringify(selectedUser.map((u)=>u._id))
+            }, config)
+            // setLoading(false)
+
+            console.log("data after creating group Chat",data)
+
+            setChats([data.data.data , ...chats])
+
+            onClose()
+
+            toast({
+                title: 'New Group Chat Created Successfylly.',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+                position: "bottom"
+            })
+            
+
+        } catch (error) {
+            toast({
+                title: 'Error Occured.',
+                description: error.response.data,
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+                position: "bottom-left"
+            })
+
+        }
+
+
+
 
     }
 
@@ -162,7 +216,7 @@ const GroupChatModal = ({ children }) => {
                         <Button colorScheme='blue' mr={3} onClick={handleSubmit}>
                             Create Chat
                         </Button>
-                        <Button variant='ghost'>Secondary Action</Button>
+                        {/* <Button variant='ghost'>Secondary Action</Button> */}
                     </ModalFooter>
                 </ModalContent>
             </Modal>

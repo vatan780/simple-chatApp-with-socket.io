@@ -9,10 +9,14 @@ import GroupChatModal from './miscellaneous/GroupChatModal';
 
 
 
-const MyChats = () => {
+const MyChats = ({fatchAgain}) => {
   const [loggedUser, setLoggedUser] = useState();
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
   const toast = useToast();
+
+  console.log('chats=============>',chats)
+
+
 
 
 
@@ -29,8 +33,8 @@ const MyChats = () => {
 
       const { data } = await axios.get('/api/chat', config);
 
-      console.log('data of my chat', data)
-      setChats(data?.user);
+      console.log('data of my chat', data.data)
+      setChats(data?.data);
     } catch (error) {
       toast({
         title: 'Error Occurred',
@@ -52,7 +56,7 @@ const MyChats = () => {
 
     fetchChat();
 
-  }, []);
+  }, [fatchAgain]);
 
   return (
     <Box
@@ -104,9 +108,10 @@ const MyChats = () => {
         {chats ? (
           <Stack overflowY="scroll">
             {
-              chats.map((chat) => (
+              chats?.map((chat) => (
+              // {console.log("chat =====================>",chat)}
                 <Box
-                  onClick={() => selectedChat(chat)}
+                  onClick={() => setSelectedChat(chat)}
                   cursor="pointer"
                   bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
                   color={selectedChat === chat ? "white" : 'black'}

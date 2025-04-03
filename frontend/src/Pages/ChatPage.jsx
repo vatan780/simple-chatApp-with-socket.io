@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 // import { ChatState } from '../ChatProvider'
 import { Box } from '@chakra-ui/react'
 import SideDrawer from '../pageComponent/miscellaneous/SideDrawer'
@@ -9,6 +9,8 @@ import { ChatState } from '../Context/ChatProvider'
 const ChatPage = () => {
   const { user } = ChatState()
   // const userInfo = JSON.parse(localStorage.getItem("userInfo"))
+
+  const [fatchAgain, setFatchAgain] = useState(false)
 
   return (
     <>
@@ -23,8 +25,8 @@ const ChatPage = () => {
           p="10px"
 
         >
-          {user?.data && <MyChats />}
-          {user?.data && <ChatBox />}
+          {user?.data && <MyChats fatchAgain={fatchAgain}/>}
+          {user?.data && <ChatBox fatchAgain={fatchAgain} setFatchAgain={setFatchAgain} />}
 
         </Box>
 
