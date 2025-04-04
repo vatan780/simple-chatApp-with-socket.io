@@ -1,15 +1,32 @@
 # POST  http://localhost:5000/api/user
-POST  http://localhost:5000/api/user/login
-Content-Type:application/json
+# login
+# POST  http://localhost:5000/api/user/login
+# Content-Type:application/json
+
 
 # {
-#     "name":"gagan",
+#     "name":"gagan3",
+#     "email":"gagan3@gamil.com",
+#     "password":"123456"
+# }
+
+
+
+# {
+  
 #     "email":"gagan@gamil.com",
 #     "password":"123456"
 # }
 
+
+//chat api
+
+POST  http://localhost:5000/api/chat
+Content-Type:application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZThkNDQ5MzZhMzZiNjJkMjZkZmExOCIsImlhdCI6MTc0MzU2NDU5NywiZXhwIjoxNzQ2MTU2NTk3fQ.WUgP6Sen1y4joPY2yJA3yKX9bcj334eQTMSR0rNGEpU
+
+
 {
-  
-    "email":"gagan@gamil.com",
-    "password":"123456"
+    "userId":"67ea48370b9fec40b8bc6a14"
 }
+

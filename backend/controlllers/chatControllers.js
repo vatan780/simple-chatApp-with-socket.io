@@ -8,10 +8,16 @@ const accessChat = async (req, res) => {
 
         const userId = req.body.userId;
 
+        console.log("userid =============>",userId)
+
 
         if (!userId) {
             return res.status(404).json({ message: "Missing UserID", success: false })
         }
+
+
+        console.log("req.user._id ",req.user._id )
+
 
         var isChat = await CHAT.find({
             isGroupChat: false,
@@ -22,12 +28,18 @@ const accessChat = async (req, res) => {
         }).populate("users", "-password")
             .populate('latestMessage')
 
+        console.log("line 27")
+
 
         isChat = await USER.populate(isChat, {
             path: "latestMessage.sender",
             select: "name email pic"
 
         })
+        console.log("line 37",isChat?.length > 0)
+
+        
+
 
         if (isChat?.length > 0) {
             return res.status(200).json({ success: true, message: "chat get Successfylly", data: isChat[0] });
@@ -41,7 +53,7 @@ const accessChat = async (req, res) => {
         }
 
         const createdChat = await CHAT.create(chatData)
-        const FullChat = await CHAT.findOne({ _id: createdChat._id }).populate("user", "-password")
+        const FullChat = await CHAT.findOne({ _id: createdChat._id }).populate("users", "-password")
         return res.status(200).json({ success: true, message: "chat Get Successfylly", data: FullChat })
 
     } catch (error) {
@@ -52,39 +64,78 @@ const accessChat = async (req, res) => {
 
 
 //get all chat of single user
+// const fetchChats = async (req, res) => {
+//     try {
+
+//         console.log("req.user._id ==============>", req.user._id)
+
+
+//         CHAT.find({
+//             // const result = await CHAT.find({
+//             users: [{
+//                 $elemMatch: { $eq: req.user._id }
+//             }]
+//         })
+//             .populate("users", "-password")
+//             .populate("groupAdmin")
+//             .populate("latestMessage")
+//             .sort({ updatedAt: -1 })
+//             .then(async (results) => {
+//                 results = await USER.populate(results, {
+//                     path: "latestMessage.sender",
+//                     select: "name pic email"
+//                 });
+//                 return res.status(200).json({ success: true, message: "Data Got Successfylly", data: results })
+//             });
+
+//         // return res.status(200).json({ success: true, message: "Data Got Successfylly", data: results })
+
+
+//     } catch (error) {
+//         console.log("error === in ====fetchChats", error.message)
+//         return res.status(500).json({ success: false, message: "Some Technical issue" })
+//     }
+
+// }
+
+
+
+
+
 const fetchChats = async (req, res) => {
     try {
+        console.log("req.user._id ==============>", req.user._id);
 
-        console.log("req.user._id ==============>", req.user._id)
-
-
-        CHAT.find({
-            // const result = await CHAT.find({
-            users: [{
-                $elemMatch: { $eq: req.user._id }
-            }]
+        let results = await CHAT.find({
+            users: { $in: [req.user._id] }
         })
-            .populate("users", "-password")
-            .populate("groupAdmin")
-            .populate("latestMessage")
-            .sort({ updatedAt: -1 })
-            .then(async (results) => {
-                results = await USER.populate(results, {
-                    path: "latestMessage.sender",
-                    select: "name pic email"
-                });
-                return res.status(200).json({ success: true, message: "Data Got Successfylly", data: results })
-            });
+        .populate("users", "-password")
+        .populate("groupAdmin")
+        .populate("latestMessage")
+        .sort({ updatedAt: -1 });
 
-        // return res.status(200).json({ success: true, message: "Data Got Successfylly", data: results })
+        results = await USER.populate(results, {
+            path: "latestMessage.sender",
+            select: "name pic email"
+        });
 
-
+        return res.status(200).json({
+            success: true,
+            message: "Data retrieved successfully",
+            data: results
+        });
     } catch (error) {
-        console.log("error === in ====fetchChats", error.message)
-        return res.status(500).json({ success: false, message: "Some Technical issue" })
+        console.log("error in fetchChats:", error.message);
+        return res.status(500).json({
+            success: false,
+            message: "Some technical issue"
+        });
     }
+};
 
-}
+
+
+
 
 const createGroupChat = async (req, res) => {
     try {
