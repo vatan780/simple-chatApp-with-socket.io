@@ -234,6 +234,8 @@ const removeFromGroup = async (req, res) => {
     try {
         const { chatId, userId } = req.body
 
+        console.log("req.body form leave group========>",req.body)
+
         const removed = await CHAT.findByIdAndUpdate(chatId,
             {
                 $pull: { users: userId }
